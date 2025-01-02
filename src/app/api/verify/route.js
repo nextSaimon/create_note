@@ -27,3 +27,14 @@ export async function POST(request) {
   console.log("User verified");
   return NextResponse.json({ message: "User verified" });
 }
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const token = searchParams.get("token");
+  await connectToDatabase();
+  const user = await User.findOne({ verifyToken: token });
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+  return NextResponse.json({ email: user.email });
+}

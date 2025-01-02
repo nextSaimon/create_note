@@ -70,14 +70,11 @@ const LoginPage = () => {
                 required
               />
               <div className="flex justify-between items-center mt-1">
-                <div></div>
-                <a href="#" className="text-sm text-blue-500 hover:underline" onClick={(e) => {
-                  e.preventDefault();
-                  // Add your forgot password logic here
-                  console.log('Forgot password clicked');
-                }}>
+                <div className=""></div>
+                
+                <Link href="/forgot-password" className="text-sm text-blue-500 hover:underline">
                   Forgot Password?
-                </a>
+                </Link>
               </div>
             </div>
           </CardContent>

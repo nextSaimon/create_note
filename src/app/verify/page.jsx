@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import PropTypes from "prop-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -22,23 +21,27 @@ const VerifyPage = () => {
   // Fetch the email from the server using the token
   const getEmail = async () => {
     try {
-      const response = await fetch("/api/getEmail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: token }),
+      const response = await fetch(`/api/verify?token=${token}`, {
+        method: "GET",
+        cache: "no-store",
       });
+  
       const data = await response.json();
+      
+      // Log response for debugging
+      console.log(data);
+  
       if (data.error) {
         setAlert(data.error);
       } else {
-        setEmail(data.email);
+        setEmail(data.email); // Set the email if response is successful
       }
     } catch (error) {
       setAlert("Error fetching email. Please try again.");
+      console.error(error);
     }
   };
+  
 
   // Perform the verification
   const verify = async () => {
@@ -109,7 +112,7 @@ const VerifyPage = () => {
             </Alert>
           )}
 
-          {verificationStatus === 'idle' && !email && (
+          {verificationStatus === 'idle'  && (
             <p className="text-center text-sm text-gray-500">
               Click the button below to verify your email address.
             </p>
