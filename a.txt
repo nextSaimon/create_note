@@ -1,102 +1,49 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import users from "@/models/user";
-import cloudinary from "@/lib/cloudinary";
-
-export async function POST(request) {
-  try {
-    const formData = await request.formData();
-    console.log("Form Data:", [...formData.entries()]);
-
-    const name = formData.get("name");
-    const file = formData.get("file");
-
-    if (!name || !file) {
-      return NextResponse.json(
-        { error: "Name and file are required" },
-        { status: 400 }
-      );
-    }
-
-    // Convert file to base64
-    const fileBuffer = await file.arrayBuffer();
-    const fileBase64 = Buffer.from(fileBuffer).toString("base64");
-
-    // Upload to Cloudinary
-    const uploadResponse = await cloudinary.uploader.upload(
-      `data:${file.type};base64,${fileBase64}`,
-      { folder: "nextjs_app" }
-    );
-
-    const publicId = uploadResponse.public_id;
-    console.log("Public ID:", publicId);
-
-    // Save to database
-    await connectToDatabase();
-    const newUser = await users.create({ name, image: publicId });
-
-    console.log("User created:", newUser);
-
-    return NextResponse.json({ message: "success", publicId });
-  } catch (error) {
-    console.error("Error during upload:", error);
-    return NextResponse.json(
-      { error: "An error occurred during the upload process." },
-      { status: 500 }
-    );
-  }
-}
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getCldImageUrl } from "next-cloudinary";
+import { auth } from "@/auth";
+import { Signout } from "@/components/Signout";
 
 
+export default async function page() {
+  const session = await auth();
 
-
-
-
-"use client"
-import { redirect } from "next/navigation";
-import { Label } from '@/components/ui/label';
-import { useState } from "react";
-
-export default function Home() {
-  const [name, setName] = useState('');
-  const [file, setFile] = useState(null);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("file", file);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    console.log(data);
-    redirect("/"); // Redirect after successful upload
-  }
+   const name = session?.user?.name || "User";
+  const email = session?.user?.email || "example@example.com";
+  const imageName = session?.user?.image || "default-avatar";
+  const avatarUrl = getCldImageUrl({
+    src: 'imageName',
+  });
+  const initials = name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
-    <div className="bg-gray-100 text-black h-screen flex flex-col justify-center items-center">
-      <h1>This is the home page</h1>
-      {/* signup form */}
-      <form onSubmit={handleSubmit}>
-        <Label htmlFor="name">Name</Label>
-        <input 
-          type="text" 
-          placeholder="Name" 
-          className="input input-bordered w-full max-w-xs" 
-          value={name} 
-          onChange={(e) => setName(e.target.value)} // Ensure correct state update
-        />
-        {/* upload image */}
-        <input 
-          type="file" 
-          onChange={(e) => setFile(e.target.files[0])} // Ensure setting the file properly
-        />
-        <button type="submit" className=" px-4 py-2 bg-blue-500 text-white rounded-sm">Submit</button>
-      </form>
-    </div>
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader className="flex flex-row items-center gap-4 pb-2">
+        <Avatar className="w-16 h-16">
+          <AvatarImage src={avatarUrl} alt={name} />
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h2 className="text-2xl font-bold">{name}</h2>
+          <p className="text-sm text-muted-foreground">{email}</p>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between text-sm">
+          <span>Name:</span>
+          <span className="font-medium">{name}</span>
+        </div>
+        <div className="flex justify-between text-sm mt-2">
+          <span>Email:</span>
+          <span className="font-medium">{email}</span>
+        </div>
+        <Signout />
+      </CardContent>
+    </Card>
   );
 }
