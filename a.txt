@@ -1,0 +1,102 @@
+import { NextResponse } from "next/server";
+import { connectToDatabase } from "@/lib/db";
+import users from "@/models/user";
+import cloudinary from "@/lib/cloudinary";
+
+export async function POST(request) {
+  try {
+    const formData = await request.formData();
+    console.log("Form Data:", [...formData.entries()]);
+
+    const name = formData.get("name");
+    const file = formData.get("file");
+
+    if (!name || !file) {
+      return NextResponse.json(
+        { error: "Name and file are required" },
+        { status: 400 }
+      );
+    }
+
+    // Convert file to base64
+    const fileBuffer = await file.arrayBuffer();
+    const fileBase64 = Buffer.from(fileBuffer).toString("base64");
+
+    // Upload to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(
+      `data:${file.type};base64,${fileBase64}`,
+      { folder: "nextjs_app" }
+    );
+
+    const publicId = uploadResponse.public_id;
+    console.log("Public ID:", publicId);
+
+    // Save to database
+    await connectToDatabase();
+    const newUser = await users.create({ name, image: publicId });
+
+    console.log("User created:", newUser);
+
+    return NextResponse.json({ message: "success", publicId });
+  } catch (error) {
+    console.error("Error during upload:", error);
+    return NextResponse.json(
+      { error: "An error occurred during the upload process." },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
+
+"use client"
+import { redirect } from "next/navigation";
+import { Label } from '@/components/ui/label';
+import { useState } from "react";
+
+export default function Home() {
+  const [name, setName] = useState('');
+  const [file, setFile] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    console.log(data);
+    redirect("/"); // Redirect after successful upload
+  }
+
+  return (
+    <div className="bg-gray-100 text-black h-screen flex flex-col justify-center items-center">
+      <h1>This is the home page</h1>
+      {/* signup form */}
+      <form onSubmit={handleSubmit}>
+        <Label htmlFor="name">Name</Label>
+        <input 
+          type="text" 
+          placeholder="Name" 
+          className="input input-bordered w-full max-w-xs" 
+          value={name} 
+          onChange={(e) => setName(e.target.value)} // Ensure correct state update
+        />
+        {/* upload image */}
+        <input 
+          type="file" 
+          onChange={(e) => setFile(e.target.files[0])} // Ensure setting the file properly
+        />
+        <button type="submit" className=" px-4 py-2 bg-blue-500 text-white rounded-sm">Submit</button>
+      </form>
+    </div>
+  );
+}
