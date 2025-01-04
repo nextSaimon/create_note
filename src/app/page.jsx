@@ -6,6 +6,8 @@ import { auth } from "@/auth";
 import Loading from "./loading";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import NoteList from "@/components/NoteList";
+
 export default async function Page() {
   const session = await auth();
 
@@ -48,13 +50,26 @@ export default async function Page() {
             <span className="font-medium">{email}</span>
           </div>
           {/* button */}
-          <div className=" flex space-x-2 items-center justify-center">
-          <Signout />
-          <Button className='mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none'><Link href="/update-password">Update Password</Link></Button>
-          <Button className='mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none'><Link href="/forgot-password">Forgot Password</Link></Button>
+          <div className="flex flex-col justify-center items-center">
+            <div className=" flex space-x-2 items-center justify-center">
+              <Signout />
+              <Button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none">
+                <Link href="/update-password">Update Password</Link>
+              </Button>
+              <Button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none">
+                <Link href="/forgot-password">Forgot Password</Link>
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-center">
+              <Button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none">
+                <Link href="/create">Create a new post</Link>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
+      <NoteList />
     </div>
   );
 }
