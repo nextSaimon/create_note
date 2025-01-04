@@ -3,7 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getCldImageUrl } from "next-cloudinary";
 import Signout from "@/components/Signout";
 import { auth } from "@/auth";
-
+import Loading from "./loading";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 export default async function Page() {
   const session = await auth();
 
@@ -17,6 +19,11 @@ export default async function Page() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  // check if image is downloaded
+  if (!avatarUrl) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -40,7 +47,12 @@ export default async function Page() {
             <span className="font-medium sm:font-normal">Email:</span>
             <span className="font-medium">{email}</span>
           </div>
+          {/* button */}
+          <div className=" flex space-x-2 items-center justify-center">
           <Signout />
+          <Button className='mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none'><Link href="/update-password">Update Password</Link></Button>
+          <Button className='mt-4 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none'><Link href="/forgot-password">Forgot Password</Link></Button>
+          </div>
         </CardContent>
       </Card>
     </div>

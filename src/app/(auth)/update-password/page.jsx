@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 
 export default function PasswordResetForm() {
   const[oldPassword, setOldPassword] = useState('')
@@ -14,8 +14,7 @@ export default function PasswordResetForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -26,7 +25,37 @@ export default function PasswordResetForm() {
       setError('Passwords do not match.')
       return
     }
+    if (password === oldPassword) {
+        setError('Password cannot be the same as the old password.')
+        return
+      }
+    try {
+      const res = await fetch('/api/private/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ oldPassword, password, confirmPassword }),
+      })
 
+      const data = await res.json()
+      if (data.error) {
+        setError(data.error)
+      } else {
+        setSuccess(true)
+        setError('')
+        setOldPassword('')
+        setPassword('')
+        setConfirmPassword('')
+        setTimeout(() => {
+          router.push('/')
+        }, 2000)
+       
+      }
+    } catch (err) {
+      console.error(err)
+      setError('An error occurred. Please try again.')
+    }
   
   }
 
@@ -45,7 +74,7 @@ export default function PasswordResetForm() {
                 <Input 
                   id="password" 
                   type="password"
-                  value={password}
+                  value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   required
                 />

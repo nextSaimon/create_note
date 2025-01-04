@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { PUBLIC_ROUTES } from './lib/routs'
+import { PUBLIC_ROUTES, PRIVATE_ROUTES } from './lib/routs'
 import { authConfig } from './auth.config'
 import NextAuth from 'next-auth'
 
@@ -24,5 +24,5 @@ export async function middleware(request) {
 }
  
 export const config = {
-  matcher: ['/',],
+  matcher: ['/','/signup','/signin','/api/private/:path*'],
 }
