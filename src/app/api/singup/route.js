@@ -14,7 +14,10 @@ export async function POST(request) {
     const image = formData.get("image"); // Image should be a file
 
     if (!name || !email || !password || !image) {
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "All fields are required" },
+        { status: 400 }
+      );
     }
 
     // Upload the image to Cloudinary
@@ -22,32 +25,37 @@ export async function POST(request) {
       folder: "12",
     });
     const publicId = uploadResponse.public_id;
-      // verifyTokenExpiry 6 hours
-  const verifyTokenExpiry = new Date(Date.now() + 6 * 60 * 60 * 1000);
+    // verifyTokenExpiry 6 hours
+    const verifyTokenExpiry = new Date(Date.now() + 6 * 60 * 60 * 1000);
 
-  // create verify token
-  const verifyToken = crypto.randomBytes(32).toString("hex");
-
-    await connectToDatabase();
-
-    const user = await users.create({
-      name,
-      email,
-      password,
-      image: publicId, 
-      verifyToken,
-      verifyTokenExpiry
-    });
-
+    // create verify token
+    const verifyToken = crypto.randomBytes(32).toString("hex");
     //send email
     try {
       await sendEmail(email, verifyToken, "verify");
       console.log("Mail sent successfully");
     } catch (error) {
       console.log(error);
+      return NextResponse.json(
+        { error: "Error sending email" },
+        { status: 500 }
+      );
     }
+    await connectToDatabase();
 
-    return NextResponse.json({ message: "User created successfully", user }, { status: 201 });
+    const user = await users.create({
+      name,
+      email,
+      password,
+      image: publicId,
+      verifyToken,
+      verifyTokenExpiry,
+    });
+
+    return NextResponse.json(
+      { message: "User created successfully", user },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Error uploading image" }, { status: 500 });
