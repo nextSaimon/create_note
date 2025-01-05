@@ -3,6 +3,7 @@ import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
 import crypto from "crypto";
 import { sendEmail } from "@/helper/mail";
+import { generateToken } from "@/helper/generateToken";
 
 export async function POST(req) {
   const { email } = await req.json();
@@ -27,7 +28,7 @@ export async function POST(req) {
 
   // Generate a token and set expiry for the password reset link
   const forgotPasswordTokenExpiry = new Date(Date.now() + 6 * 60 * 60 * 1000); // 6 hours
-  const forgotPasswordToken = crypto.randomBytes(32).toString("hex");
+  const forgotPasswordToken = await generateToken(email);
 
   // Save the token and expiry date to the user
   user.forgotPasswordToken = forgotPasswordToken;

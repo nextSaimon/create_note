@@ -42,7 +42,10 @@ export default function PasswordResetForm() {
         return
       }
 
+      setError('')
+
       setSuccess(true)
+
     } catch (err) {
       console.error(err)
       setError('An error occurred. Please try again.')

@@ -17,6 +17,22 @@ export default function NoteList() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const handleEdit = (noteId) => {
+    // Placeholder for edit functionality
+    console.log(`Editing note with id: ${noteId}`);
+    // In a real application, you might open an edit modal or navigate to an edit page
+  };
+
+const handleDelete = (noteId) => {
+  // Use _id for filtering as per the mapping in notes
+  setNotes(notes.filter((note) => note._id !== noteId));
+
+  // If the deleted note was selected, clear the selection
+  if (selectedNote && selectedNote._id === noteId) {
+    setSelectedNote(null);
+  }
+};
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -49,7 +65,7 @@ export default function NoteList() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen  p-4">
-        {selectedNote && (
+      {selectedNote && (
         <Card className="w-full max-w-md mt-4">
           <CardHeader>
             <CardTitle>{selectedNote.title}</CardTitle>
@@ -74,41 +90,50 @@ export default function NoteList() {
               <Loading /> // Show loading component while data is being fetched
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {notes.map((note) => (
-                  <Card
-                    key={note._id}
-                    className="flex flex-col justify-between hover:shadow-md transition-shadow"
-                  >
-                    <div
-                      onClick={() => handleNoteClick(note)}
-                      className="cursor-pointer"
+                {notes
+                  .slice()
+                  .reverse()
+                  .map((note) => (
+                    <Card
+                      key={note._id}
+                      className="flex flex-col justify-between hover:shadow-md transition-shadow"
                     >
-                      <CardHeader>
-                        <CardTitle>{note.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-500 line-clamp-3">
-                          {note.description}
-                        </p>
-                      </CardContent>
-                    </div>
-                    <CardFooter className="flex justify-end space-x-2">
-                      <Button variant="outline" size="icon" disabled>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" disabled>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+                      <div
+                        onClick={() => handleNoteClick(note)}
+                        className="cursor-pointer"
+                      >
+                        <CardHeader>
+                          <CardTitle>{note.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-gray-500 line-clamp-3">
+                            {note.description}
+                          </p>
+                        </CardContent>
+                      </div>
+                      <CardFooter className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleEdit(note._id)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDelete(note._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
               </div>
             )}
           </ScrollArea>
         </CardContent>
       </Card>
-
-    
     </div>
   );
 }

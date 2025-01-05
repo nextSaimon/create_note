@@ -7,8 +7,6 @@ const { auth } = NextAuth(authConfig);
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request) {
-  console.log(request);
-
   const session = await auth();
   console.log(session);
 
@@ -32,8 +30,8 @@ export async function middleware(request) {
       secure: process.env.NODE_ENV === "production", // Use secure flag in production
       maxAge: 60 * 60 * 24 * 30, // Set the expiry to 30 days
     });
+    console.log("cookie set");
   }
-  console.log("cookie set");
 
   // Redirect if the user is not authenticated and is trying to access a private route
   if (!isAuthenticated && !isPublicRoute) {

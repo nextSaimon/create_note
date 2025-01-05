@@ -4,6 +4,7 @@ import users from "@/models/user";
 import cloudinary from "@/lib/cloudinary";
 import crypto from "crypto";
 import { sendEmail } from "@/helper/mail";
+import {generateToken} from '@/helper/generateToken'
 
 export async function POST(request) {
   try {
@@ -29,7 +30,7 @@ export async function POST(request) {
     const verifyTokenExpiry = new Date(Date.now() + 6 * 60 * 60 * 1000);
 
     // create verify token
-    const verifyToken = crypto.randomBytes(32).toString("hex");
+    const verifyToken = await generateToken(email);
     //send email
     try {
       await sendEmail(email, verifyToken, "verify");
