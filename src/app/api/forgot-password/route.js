@@ -6,7 +6,7 @@ import { sendEmail } from "@/helper/mail";
 
 export async function POST(req) {
   const { email } = await req.json();
-  
+
   // Log the email for debugging
   console.log(email);
 
@@ -22,10 +22,7 @@ export async function POST(req) {
 
   // Check if the user is verified
   if (!user.isVerified) {
-    return NextResponse.json(
-      { error: "User not verified" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "User not verified" }, { status: 400 });
   }
 
   // Generate a token and set expiry for the password reset link
