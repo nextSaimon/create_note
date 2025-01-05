@@ -48,7 +48,7 @@ export default function PasswordResetForm() {
         setPassword('')
         setConfirmPassword('')
         setTimeout(() => {
-          router.push('/')
+        router.push('/')
         }, 2000)
        
       }
