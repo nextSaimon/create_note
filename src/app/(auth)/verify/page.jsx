@@ -3,7 +3,14 @@ import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, XCircle } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -102,8 +109,12 @@ const VerifyPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Email Verification</CardTitle>
-          <CardDescription>Please verify your email address to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold">
+            Email Verification
+          </CardTitle>
+          <CardDescription>
+            Please verify your email address to continue
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {getEmailStatus === "success" && (
@@ -149,12 +160,21 @@ const VerifyPage = () => {
         <CardFooter className="flex flex-col items-center justify-center">
           <Button
             onClick={verify}
-            disabled={verificationStatus === "loading" || verificationStatus === "success" || getEmailStatus !== "success"}
+            disabled={
+              verificationStatus === "loading" ||
+              verificationStatus === "success" ||
+              getEmailStatus !== "success"
+            }
             className="w-full max-w-xs"
           >
             {verificationStatus === "loading" ? "Verifying..." : "Verify Email"}
           </Button>
-          <p className="mt-4 text-sm text-center text-gray-500">Go back to <Link href="/signin" className="text-blue-500 hover:underline">Sign In</Link></p>
+          <p className="mt-4 text-sm text-center text-gray-500">
+            Go back to{" "}
+            <Link href="/signin" className="text-blue-500 hover:underline">
+              Sign In
+            </Link>
+          </p>
         </CardFooter>
       </Card>
     </div>
