@@ -8,7 +8,7 @@ import {generateToken} from '@/helper/generateToken'
 import { cookieCheck } from "@/helper/cookieCheck";
 
 
-export async function POST(request) {
+export async function POST(req) {
    const isAuthenticated = await cookieCheck(req);
 
    if (!isAuthenticated) {
@@ -16,7 +16,7 @@ export async function POST(request) {
      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
    }
   try {
-    const formData = await request.formData();
+    const formData = await req.formData();
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");

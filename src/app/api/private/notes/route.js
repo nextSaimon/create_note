@@ -1,7 +1,6 @@
 // /api/private/notes/route.js
 import { NextResponse } from 'next/server'
 import { connectToDatabase } from '@/lib/db'
-import User from '@/models/user' // Assuming your user model is named 'User'
 import Notes from '@/models/note'
 import { auth } from '@/auth'
 import { cookieCheck } from "@/helper/cookieCheck";

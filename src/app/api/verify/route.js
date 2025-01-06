@@ -4,14 +4,14 @@ import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
 import { cookieCheck } from "@/helper/cookieCheck";
 
-export async function POST(request) {
+export async function POST(req) {
   const isAuthenticated = await cookieCheck(req);
 
   if (!isAuthenticated) {
     // Redirect to login if the cookie is not valid
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { token } = await request.json(); // Destructure token directly
+  const { token } = await req.json(); // Destructure token directly
   console.log(token);
 
   await connectToDatabase();
@@ -34,8 +34,8 @@ export async function POST(request) {
   return NextResponse.json({ message: "User verified" });
 }
 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url);
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
   const token = searchParams.get("token");
   await connectToDatabase();
   const user = await User.findOne({ verifyToken: token });
