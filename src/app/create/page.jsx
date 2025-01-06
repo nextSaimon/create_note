@@ -26,7 +26,7 @@ export default function NoteCreator() {
     }
 
     try {
-      const response = await fetch("/api/private/create", {
+      const response = await fetch("/api/private/note/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

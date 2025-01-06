@@ -23,7 +23,7 @@ export default function NoteList() {
     // In a real application, you might open an edit modal or navigate to an edit page
   };
 
-const handleDelete = (noteId) => {
+const handleDelete = async (noteId) => {
   // Use _id for filtering as per the mapping in notes
   setNotes(notes.filter((note) => note._id !== noteId));
 
@@ -31,12 +31,16 @@ const handleDelete = (noteId) => {
   if (selectedNote && selectedNote._id === noteId) {
     setSelectedNote(null);
   }
+
+  // send a delete request to the backend
+
+  const req=await fetch(`/api/private/note/${noteId}`,{method:"DELETE"});
 };
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("/api/private/notes", {
+        const response = await fetch("/api/private/note/notes", {
           case: "no-store",
         });
         const data = await response.json();
