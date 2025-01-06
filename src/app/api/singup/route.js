@@ -4,17 +4,16 @@ import users from "@/models/user";
 import cloudinary from "@/lib/cloudinary";
 import crypto from "crypto";
 import { sendEmail } from "@/helper/mail";
-import {generateToken} from '@/helper/generateToken'
+import { generateToken } from "@/helper/generateToken";
 import { cookieCheck } from "@/helper/cookieCheck";
 
-
 export async function POST(req) {
-   const isAuthenticated = await cookieCheck(req);
+  const isAuthenticated = await cookieCheck(req);
 
-   if (!isAuthenticated) {
-     // Redirect to login if the cookie is not valid
-     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-   }
+  if (!isAuthenticated) {
+    // Redirect to login if the cookie is not valid
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const formData = await req.formData();
     const name = formData.get("name");
@@ -25,6 +24,15 @@ export async function POST(req) {
     if (!name || !email || !password || !image) {
       return NextResponse.json(
         { error: "All fields are required" },
+        { status: 400 }
+      );
+    }
+    await connectToDatabase();
+
+    const existingUser = await users.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "User already exists" },
         { status: 400 }
       );
     }
@@ -50,7 +58,6 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-    await connectToDatabase();
 
     const user = await users.create({
       name,
@@ -67,6 +74,9 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Error uploading image" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error uploading image" },
+      { status: 500 }
+    );
   }
 }

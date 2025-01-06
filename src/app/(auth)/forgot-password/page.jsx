@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
             Remember your password?{" "}
             <Link
               href="/signin"
-              className="font-medium text-primary hover:underline"
+              className="font-medium text-blue-500 hover:underline "
             >
               Back to Signin
             </Link>

@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -80,6 +81,15 @@ export default function Page() {
             {success && (
               <p className="text-green-500 text-sm mt-2">{success}</p>
             )}
+            <p className="text-sm text-center w-full">
+              Remember your password?{" "}
+              <Link
+                href="/signin"
+                className="font-medium  text-blue-500 hover:underline "
+              >
+                Back to Signin
+              </Link>
+            </p>
           </form>
         </CardContent>
       </Card>

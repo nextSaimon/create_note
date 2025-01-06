@@ -5,14 +5,13 @@ import users from "@/models/user";
 import notes from "@/models/note";
 import { cookieCheck } from "@/helper/cookieCheck";
 
-
 export async function POST(req) {
-   const isAuthenticated = await cookieCheck(req);
+  const isAuthenticated = await cookieCheck(req);
 
-   if (!isAuthenticated) {
-     // Redirect to login if the cookie is not valid
-     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-   }
+  if (!isAuthenticated) {
+    // Redirect to login if the cookie is not valid
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const session = await auth();
   if (!session) {
     console.log("Unauthorized");
