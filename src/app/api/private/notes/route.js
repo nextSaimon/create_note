@@ -15,7 +15,7 @@ export async function GET(req) {
     await connectToDatabase()
     const notes = await Notes.find({ user: id },'title description _id')
 
-    return NextResponse.json( notes)
+    return NextResponse.json( {notes})
   } catch (error) {
     console.error('Error fetching users:', error)
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })

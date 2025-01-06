@@ -41,7 +41,7 @@ const handleDelete = (noteId) => {
         });
         const data = await response.json();
         if (response.ok) {
-          setNotes(data);
+          setNotes(data.notes);
         } else {
           console.error("Error fetching notes:", data.error);
         }

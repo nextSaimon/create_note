@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { User } from 'lucide-react'
 import Link from 'next/link'
-import { CldImage } from 'next-cloudinary';
+import Rve from '@/components/Rve'
 const SignupPage = ({ onSubmit, onLoginClick }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -150,6 +150,7 @@ const SignupPage = ({ onSubmit, onLoginClick }) => {
                 Log in
               </Link>
             </p>
+            <Rve />
           </CardFooter>
         </form>
       </Card>

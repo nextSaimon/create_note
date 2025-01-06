@@ -7,6 +7,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import {useRouter} from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from "next-auth/react";
+import Rve from "@/components/Rve";
+
 const LoginPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,7 +46,9 @@ const LoginPage = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-center justify-center text-center">
           <CardTitle>Login</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardDescription>
+            Enter your credentials to access your account
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -71,8 +75,11 @@ const LoginPage = () => {
               />
               <div className="flex justify-between items-center mt-1">
                 <div className=""></div>
-                
-                <Link href="/forgot-password" className="text-sm text-blue-500 hover:underline">
+
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-blue-500 hover:underline"
+                >
                   Forgot Password?
                 </Link>
               </div>
@@ -80,18 +87,21 @@ const LoginPage = () => {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             {error && <p className="text-red-500">{error}</p>}
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" className="w-full">
+              Login
+            </Button>
             <p className="text-sm text-center">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link href="/signup" className="text-blue-500 hover:underline">
                 Sign up
               </Link>
             </p>
+            <Rve />
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
+  );
 }
 
 
