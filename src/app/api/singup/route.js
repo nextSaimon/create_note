@@ -5,8 +5,16 @@ import cloudinary from "@/lib/cloudinary";
 import crypto from "crypto";
 import { sendEmail } from "@/helper/mail";
 import {generateToken} from '@/helper/generateToken'
+import { cookieCheck } from "@/helper/cookieCheck";
+
 
 export async function POST(request) {
+   const isAuthenticated = await cookieCheck(req);
+
+   if (!isAuthenticated) {
+     // Redirect to login if the cookie is not valid
+     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+   }
   try {
     const formData = await request.formData();
     const name = formData.get("name");

@@ -21,7 +21,8 @@ export async function middleware(request) {
   // Set the cookie if not already set
   const cookie = request.cookies.get("__user__");
   const response = NextResponse.next();
- const token= '99318e5ef848336a82721f1625719f206aac86802e799468a61a8f9568ee9421'
+  const token =
+    "99318e5ef848336a82721f1625719f206aac86802e799468a61a8f9568ee9421";
   // If cookie is not set, set it
   if (!cookie) {
     response.cookies.set("__user__", token, {

@@ -2,9 +2,15 @@
 import { NextResponse } from "next/server";
 import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
-
+import { cookieCheck } from "@/helper/cookieCheck";
 
 export async function POST(request) {
+  const isAuthenticated = await cookieCheck(req);
+
+  if (!isAuthenticated) {
+    // Redirect to login if the cookie is not valid
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { token } = await request.json(); // Destructure token directly
   console.log(token);
 

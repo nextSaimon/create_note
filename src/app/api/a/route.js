@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
+import { cookieCheck } from "@/helper/cookieCheck";
 
-export async function POST(req) {
-  const cookie = req.cookies.get("isBrowser");
-  console.log("cookies",req.cookies);
-  
-//   if(!cookie) {
-//     //redirect to login
-//     return NextResponse.redirect(new URL("/signin", req.url));
-//   }
-  return NextResponse.json({ message: "hello", cookieName: cookie?.name||"null" });
+export async function GET(req) {
+  const isAuthenticated = await cookieCheck(req);
+
+  if (!isAuthenticated) {
+    // Redirect to login if the cookie is not valid
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  return NextResponse.json({ message: "Hello" });
 }

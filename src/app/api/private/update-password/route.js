@@ -2,7 +2,15 @@ import {NextResponse} from 'next/server'
 import {auth} from '@/auth'
 import { connectToDatabase } from "@/lib/db";
 import users from "@/models/user";
+import { cookieCheck } from "@/helper/cookieCheck";
+
 export async function POST(req) {
+     const isAuthenticated = await cookieCheck(req);
+
+     if (!isAuthenticated) {
+       // Redirect to login if the cookie is not valid
+       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+     }
     // get session
     const session=await auth()
     if(!session){
