@@ -60,11 +60,7 @@ export default async function Page() {
                 <Link href="/forgot-password">Forgot Password</Link>
               </Button>
             </div>
-
-            <div className="flex items-center justify-center">
-              <Button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none">
-                <Link href="/create">Create a new post</Link>
-              </Button>
+            <div className="flex items-center justify-center mt-4">
               <Add />
             </div>
           </div>
