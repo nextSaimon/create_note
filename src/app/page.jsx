@@ -11,7 +11,6 @@ import Add from "@/components/Add";
 
 export default async function Page() {
   const session = await auth();
-
   const name = session?.user?.name || "User";
   const email = session?.user?.email || "example@example.com";
   const imageName = session?.user?.image || "default-avatar";

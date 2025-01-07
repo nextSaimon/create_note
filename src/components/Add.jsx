@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-
 export default function ModalForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -47,9 +46,8 @@ export default function ModalForm() {
         setTitle("");
         setDescription("");
         setSuccess(true);
-        setTimeout(() => {
-          setIsOpen(false);
-        }, 1000);
+        setIsOpen(false);
+        window.location.reload();
       }
     } catch (err) {
       console.error(err);
