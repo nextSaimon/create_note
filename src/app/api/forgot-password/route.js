@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
-import crypto from "crypto";
 import { sendEmail } from "@/helper/mail";
 import { generateToken } from "@/helper/generateToken";
 import { cookieCheck } from "@/helper/cookieCheck";

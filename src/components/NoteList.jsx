@@ -10,13 +10,13 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import Loading from "@/app/loading";
 import {
-  Modal,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-} from "@/components/ui/modal";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -24,14 +24,13 @@ export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editData, setEditData] = useState({ title: "", description: "" });
 
   const handleEdit = (note) => {
     setEditData({ title: note.title, description: note.description });
     setSelectedNote(note);
-    setIsModalOpen(true); // Open modal for editing
-    
+    setIsDialogOpen(true);
   };
 
   const handleSaveEdit = async () => {
@@ -45,13 +44,12 @@ export default function NoteList() {
       });
 
       if (response.ok) {
-        // Update the note in the local state
         setNotes((prevNotes) =>
           prevNotes.map((note) =>
             note._id === selectedNote._id ? { ...note, ...editData } : note
           )
         );
-        setIsModalOpen(false); // Close the modal
+        setIsDialogOpen(false);
         setSelectedNote(null);
       } else {
         console.error("Error updating note");
@@ -121,7 +119,9 @@ export default function NoteList() {
         <CardContent>
           <ScrollArea className="h-[60vh]">
             {loading ? (
-              <Loading />
+              <div className="flex justify-center items-center h-full">
+                <p>Loading...</p>
+              </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {notes
@@ -169,20 +169,18 @@ export default function NoteList() {
         </CardContent>
       </Card>
 
-      {/* Modal for Editing Note */}
-      {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <ModalHeader>
-            <CardTitle>Edit Note</CardTitle>
-          </ModalHeader>
-          <ModalContent>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Note</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
             <Input
               placeholder="Title"
               value={editData.title}
               onChange={(e) =>
                 setEditData((prev) => ({ ...prev, title: e.target.value }))
               }
-              className="mb-4"
             />
             <Textarea
               placeholder="Description"
@@ -194,15 +192,12 @@ export default function NoteList() {
                 }))
               }
             />
-          </ModalContent>
-          <ModalFooter>
+          </div>
+          <DialogFooter>
             <Button onClick={handleSaveEdit}>Save</Button>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Modal>
-      )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
