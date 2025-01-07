@@ -14,3 +14,17 @@ export async function DELETE(req, { params }) {
     
     return NextResponse.json({ message: "Note deleted successfully" });
 }
+
+//update note api
+export async function PUT(req, { params }) {
+    const  id  = params.id;
+    const { title, description } = await req.json();
+    await connectToDatabase();
+    const note = await notes.findOneAndUpdate({ _id: id }, { title, description }, { new: true });
+    if (!note) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+    console.log("Note updated successfully");
+    
+    return NextResponse.json({ message: "Note updated successfully" });
+}

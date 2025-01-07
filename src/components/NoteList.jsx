@@ -11,37 +11,71 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import Loading from "@/app/loading";
+import {
+  Modal,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+} from "@/components/ui/modal";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState({ title: "", description: "" });
 
-  const handleEdit = (noteId) => {
-    // Placeholder for edit functionality
-    console.log(`Editing note with id: ${noteId}`);
-    // In a real application, you might open an edit modal or navigate to an edit page
+  const handleEdit = (note) => {
+    setEditData({ title: note.title, description: note.description });
+    setSelectedNote(note);
+    setIsModalOpen(true); // Open modal for editing
+    
   };
 
-const handleDelete = async (noteId) => {
-  // Use _id for filtering as per the mapping in notes
-  setNotes(notes.filter((note) => note._id !== noteId));
+  const handleSaveEdit = async () => {
+    try {
+      const response = await fetch(`/api/private/note/${selectedNote._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editData),
+      });
 
-  // If the deleted note was selected, clear the selection
-  if (selectedNote && selectedNote._id === noteId) {
-    setSelectedNote(null);
-  }
+      if (response.ok) {
+        // Update the note in the local state
+        setNotes((prevNotes) =>
+          prevNotes.map((note) =>
+            note._id === selectedNote._id ? { ...note, ...editData } : note
+          )
+        );
+        setIsModalOpen(false); // Close the modal
+        setSelectedNote(null);
+      } else {
+        console.error("Error updating note");
+      }
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
+  };
 
-  // send a delete request to the backend
+  const handleDelete = async (noteId) => {
+    setNotes(notes.filter((note) => note._id !== noteId));
 
-  const req=await fetch(`/api/private/note/${noteId}`,{method:"DELETE"});
-};
+    if (selectedNote && selectedNote._id === noteId) {
+      setSelectedNote(null);
+    }
+
+    await fetch(`/api/private/note/${noteId}`, { method: "DELETE" });
+  };
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const response = await fetch("/api/private/note/notes", {
-          case: "no-store",
+          cache: "no-store",
         });
         const data = await response.json();
         if (response.ok) {
@@ -59,16 +93,12 @@ const handleDelete = async (noteId) => {
     fetchNotes();
   }, []);
 
-  const handleNoteClick = (note) => {
-    setSelectedNote(note);
-  };
-
   const handleCloseDetails = () => {
     setSelectedNote(null);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen  p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
       {selectedNote && (
         <Card className="w-full max-w-md mt-4">
           <CardHeader>
@@ -91,7 +121,7 @@ const handleDelete = async (noteId) => {
         <CardContent>
           <ScrollArea className="h-[60vh]">
             {loading ? (
-              <Loading /> // Show loading component while data is being fetched
+              <Loading />
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {notes
@@ -103,7 +133,7 @@ const handleDelete = async (noteId) => {
                       className="flex flex-col justify-between hover:shadow-md transition-shadow"
                     >
                       <div
-                        onClick={() => handleNoteClick(note)}
+                        onClick={() => handleEdit(note)}
                         className="cursor-pointer"
                       >
                         <CardHeader>
@@ -119,7 +149,7 @@ const handleDelete = async (noteId) => {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => handleEdit(note._id)}
+                          onClick={() => handleEdit(note)}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -138,6 +168,41 @@ const handleDelete = async (noteId) => {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      {/* Modal for Editing Note */}
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <ModalHeader>
+            <CardTitle>Edit Note</CardTitle>
+          </ModalHeader>
+          <ModalContent>
+            <Input
+              placeholder="Title"
+              value={editData.title}
+              onChange={(e) =>
+                setEditData((prev) => ({ ...prev, title: e.target.value }))
+              }
+              className="mb-4"
+            />
+            <Textarea
+              placeholder="Description"
+              value={editData.description}
+              onChange={(e) =>
+                setEditData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+            />
+          </ModalContent>
+          <ModalFooter>
+            <Button onClick={handleSaveEdit}>Save</Button>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      )}
     </div>
   );
 }

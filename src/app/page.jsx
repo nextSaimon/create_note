@@ -7,6 +7,7 @@ import Loading from "./loading";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import NoteList from "@/components/NoteList";
+import Add from "@/components/Add";
 
 export default async function Page() {
   const session = await auth();
@@ -65,6 +66,7 @@ export default async function Page() {
               <Button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none">
                 <Link href="/create">Create a new post</Link>
               </Button>
+              <Add />
             </div>
           </div>
         </CardContent>
